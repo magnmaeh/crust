@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include <string.h>
 
+#include "../lib/inc/packet.h"
+
 #define PORT 8080
 
 int main(void)
@@ -34,13 +36,15 @@ int main(void)
     listen(sock, 1);
     int cli_sock = accept(sock, &client, &client_sockaddr_len);
 
-    unsigned char buff[512];
-    memset(buff, 0, sizeof(buff));
+
+    struct packet data = {
+        .placeholder = 0
+    };
 
     while (1) {
-        int nbytes_read = read(cli_sock, buff, sizeof(buff));
+        int nbytes_read = read(cli_sock, &data, sizeof(data));
         if (nbytes_read > 0) {
-            printf("Got data: %s\n", buff);
+            packet_print(&data);
         }
         usleep(500);
     }
